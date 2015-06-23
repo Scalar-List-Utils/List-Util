@@ -7,6 +7,21 @@ use File::Spec;
 use ExtUtils::MakeMaker;
 my $PERL_CORE = grep { $_ eq 'PERL_CORE=1' } @ARGV;
 
+if (eval { require List::Util }
+    && List::Util->VERSION <= 1.42) {
+  package MY;
+  no warnings 'once';
+
+  *install = sub {
+    my $self = shift;
+    return '
+pure_site_install ::
+	$(NOECHO) $(RM_F) ' . $self->quote_literal(
+      $self->catfile('$(DESTINSTALLSITEARCH)', 'List', 'Util.pm')
+    ) . "\n" . $self->SUPER::install;
+  };
+}
+
 WriteMakefile(
   NAME         => q[List::Util],
   ABSTRACT     => q[List utility subroutines],
