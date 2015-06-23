@@ -5,6 +5,33 @@ use warnings;
 use ExtUtils::MakeMaker;
 my $PERL_CORE = grep { $_ eq 'PERL_CORE=1' } @ARGV;
 
+if (eval { require List::Util }
+    && List::Util->VERSION <= 1.45) {
+  package MY;
+  no warnings 'once';
+
+  *install = sub {
+    my $self = shift;
+    my $quote_literal = $self->can('quote_literal') ? 'quote_literal' : sub { $_[1] };
+    return '
+pure_site_install ::
+	$(NOECHO) $(RM_F) ' . $self->$quote_literal(
+      $self->catfile('$(DESTINSTALLSITEARCH)', 'List', 'Util.pm')
+    ) . '
+	$(NOECHO) $(RM_F) ' . $self->$quote_literal(
+      $self->catfile('$(DESTINSTALLSITEARCH)', 'List', 'Util', 'PP.pm')
+    ) . '
+pure_perl_install ::
+	$(NOECHO) $(RM_F) ' . $self->$quote_literal(
+      $self->catfile('$(DESTINSTALLARCHLIB)', 'List', 'Util.pm')
+    ) . '
+	$(NOECHO) $(RM_F) ' . $self->$quote_literal(
+      $self->catfile('$(DESTINSTALLARCHLIB)', 'List', 'Util', 'PP.pm')
+    )
+    . "\n" . $self->SUPER::install;
+  };
+}
+
 WriteMakefile(
   NAME         => q[List::Util],
   ABSTRACT     => q[Common List utility subroutines],
