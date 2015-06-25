@@ -61,10 +61,6 @@ sub import
   goto &Exporter::import;
 }
 
-# For objects returned by pairs()
-sub List::Util::_Pair::key   { shift->[0] }
-sub List::Util::_Pair::value { shift->[1] }
-
 1;
 
 __END__
