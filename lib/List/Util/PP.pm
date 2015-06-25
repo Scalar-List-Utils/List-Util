@@ -35,9 +35,7 @@ sub import {
 
 sub reduce (&@) {
   my $code = shift;
-  require Scalar::Util;
-  my $type = Scalar::Util::reftype($code);
-  unless($type and $type eq 'CODE') {
+  unless ( ref $code && eval { \&$code } ) {
     require Carp;
     Carp::croak("Not a subroutine reference");
   }
@@ -59,17 +57,14 @@ sub reduce (&@) {
 }
 
 sub first (&@) {
-  my $code = shift;
-  require Scalar::Util;
-  my $type = Scalar::Util::reftype($code);
-  unless($type and $type eq 'CODE') {
+  my $f = shift;
+  unless ( ref $f && eval { \&$f } ) {
     require Carp;
     Carp::croak("Not a subroutine reference");
   }
 
-  foreach (@_) {
-    return $_ if &{$code}();
-  }
+  $f->() and return $_
+    foreach @_;
 
   undef;
 }
@@ -125,33 +120,29 @@ sub shuffle (@) {
 
 sub all (&@) {
   my $f = shift;
-  foreach (@_) {
-    return 0 unless $f->();
-  }
+  $f->() or return 0
+    foreach @_;
   return 1;
 }
 
 sub any (&@) {
   my $f = shift;
-  foreach (@_) {
-    return 1 if $f->();
-  }
+  $f->() and return 1
+    foreach @_;
   return 0;
 }
 
 sub none (&@) {
   my $f = shift;
-  foreach (@_) {
-    return 0 if $f->();
-  }
+  $f->() and return 0
+    foreach @_;
   return 1;
 }
 
 sub notall (&@) {
   my $f = shift;
-  foreach (@_) {
-    return 1 unless $f->();
-  }
+  $f->() or return 1
+    foreach @_;
   return 0;
 }
 
@@ -179,7 +170,7 @@ sub pairs (@) {
 }
 
 sub unpairs (@) {
-  map { @{$_}[0,1] } @_;
+  map @{$_}[0,1], @_;
 }
 
 sub pairkeys (@) {
@@ -258,8 +249,8 @@ sub pairfirst (&@) {
   return ();
 }
 
-sub List::Util::PP::_Pair::key   { shift->[0] }
-sub List::Util::PP::_Pair::value { shift->[1] }
+sub List::Util::PP::_Pair::key   { $_[0][0] }
+sub List::Util::PP::_Pair::value { $_[0][1] }
 
 sub uniq {
   my %seen;
