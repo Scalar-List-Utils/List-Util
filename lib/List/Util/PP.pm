@@ -19,8 +19,6 @@ our @EXPORT_OK  = qw(
 our $VERSION = "1.45";
 $VERSION = eval $VERSION;
 
-our ($a, $b);
-
 sub import {
   my $pkg = caller;
 
