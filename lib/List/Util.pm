@@ -550,7 +550,7 @@ to add due to them being very simple to implement in perl
 
 =head1 SEE ALSO
 
-L<Scalar::Util>, L<List::MoreUtils>
+L<Scalar::Util>
 
 =head1 COPYRIGHT
 
