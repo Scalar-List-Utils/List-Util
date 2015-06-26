@@ -8,7 +8,7 @@ use ExtUtils::MakeMaker;
 my $PERL_CORE = grep { $_ eq 'PERL_CORE=1' } @ARGV;
 
 WriteMakefile(
-  NAME         => q[List::Util::XS],
+  NAME         => q[List::Util],
   ABSTRACT     => q[List utility subroutines],
   AUTHOR       => q[Paul Evans <leonerd@leonerd.org.uk>],
   DEFINE       => q[-DPERL_EXT],
@@ -23,8 +23,6 @@ WriteMakefile(
   # This means that we can't have the top-level util.o
   # and the extension-level Util.o in the same build.
   # One such platform is the POSIX-BC BS2000 EBCDIC mainframe platform.
-  XS     => {'ListUtil.xs' => 'ListUtil.c'},
-  OBJECT => 'ListUtil$(OBJ_EXT)',
   ( $PERL_CORE
     ? ()
     : (

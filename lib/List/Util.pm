@@ -15,7 +15,6 @@ our @EXPORT_OK  = qw(
   pairs unpairs pairkeys pairvalues pairmap pairgrep pairfirst
 );
 our $VERSION    = "1.42";
-our $XS_VERSION = $VERSION;
 $VERSION    = eval $VERSION;
 
 require Scalar::Util;
@@ -47,8 +46,8 @@ eval { require Sub::Util };
   }
 }
 
-require List::Util::XS;
-List::Util::XS->import(@EXPORT_OK);
+require List::Util::PP;
+List::Util::PP->import(@EXPORT_OK);
 
 sub import
 {
