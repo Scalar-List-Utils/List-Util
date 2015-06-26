@@ -65,8 +65,13 @@ $VERSION    = eval $VERSION;
   }
 }
 
-require List::Util::PP;
-List::Util::PP->import(@EXPORT_OK);
+if (eval { require List::Util::XS; } && $List::Util::XS::VERSION > 1.45) {
+  List::Util::XS->import(@EXPORT_OK);
+}
+else {
+  require List::Util::PP;
+  List::Util::PP->import(@EXPORT_OK);
+}
 
 sub import
 {
