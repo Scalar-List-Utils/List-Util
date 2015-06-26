@@ -283,3 +283,46 @@ sub uniqstr {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+List::Util::PP - Pure-perl implementations of List::Util subroutines
+
+=head1 SYNOPSIS
+
+    use List::Util qw(
+      reduce any all none notall first
+
+      max maxstr min minstr product sum sum0
+
+      pairs pairkeys pairvalues pairfirst pairgrep pairmap
+
+      shuffle
+    );
+
+=head1 DESCRIPTION
+
+C<List::Util::PP> contains pure-perl implementations of all of the functions
+documented in L<List::Util>.  This is meant for when a compiler is not
+available, or when packaging for reuse without without installing modules.
+
+Generally, L<List::Util> should be used instead, which will automatically use
+the faster XS implementation when possible, but fall back on this module
+otherwise.
+
+=head1 SEE ALSO
+
+L<List::Util>, L<List::Util::XS>
+
+=head1 COPYRIGHT
+
+Copyright (c) 1997-2007 Graham Barr <gbarr@pobox.com>. All rights reserved.
+This program is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+Recent additions and current maintenance by
+Paul Evans, <leonerd@leonerd.org.uk>.
+
+=cut
