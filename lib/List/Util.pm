@@ -31,10 +31,8 @@ eval { require Sub::Util };
     ( $scalar_v <= 1.42 )
     || ( $sub_v && $sub_v <= 1.42 )
   ) {
-    my %scalar_stash = %Scalar::Util::;
-    %Scalar::Util:: = () if $scalar_v > 1.42;
-    my %sub_stash = %Sub::Util::;
-    %Sub::Util:: = () if $sub_v > 1.42;
+    local %Scalar::Util:: if $scalar_v > 1.42;
+    local %Sub::Util::    if $sub_v > 1.42;
     my %list_stash = %List::Util::;
     %List::Util:: = ();
     my $success = eval {
@@ -44,8 +42,6 @@ eval { require Sub::Util };
       1;
     };
     my $e = $@;
-    %Scalar::Util:: = %scalar_stash if $scalar_v > 1.42;
-    %Sub::Util:: = %sub_stash if $sub_v > 1.42;
     %List::Util:: = %list_stash;
     die $e unless $success;
   }
