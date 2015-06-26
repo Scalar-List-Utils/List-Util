@@ -7,6 +7,9 @@ use File::Spec;
 use ExtUtils::MakeMaker;
 my $PERL_CORE = grep { $_ eq 'PERL_CORE=1' } @ARGV;
 
+use lib 'inc';
+use ExtUtils::HasCompiler qw(can_compile_loadable_object);
+
 if (eval { require List::Util }
     && List::Util->VERSION <= 1.42) {
   package MY;
@@ -42,7 +45,10 @@ WriteMakefile(
     ? ()
     : (
       INSTALLDIRS      => ($] < 5.011 ? q[perl] : q[site]),
-      PREREQ_PM        => {'Test::More' => 0,},
+      PREREQ_PM        => {
+        (can_compile_loadable_object(quiet => 1) ? ("List::Util::XS" => "1.42_001") : ()),
+        'Test::More' => 0,
+      },
       MIN_PERL_VERSION => '5.006',
       (eval { ExtUtils::MakeMaker->VERSION(6.31) } ? (LICENSE => 'perl') : ()),
       ( eval { ExtUtils::MakeMaker->VERSION(6.46) } ? (
