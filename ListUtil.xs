@@ -85,7 +85,7 @@ static enum slu_accum accum_type(SV *sv) {
 /* Magic for set_subname */
 static MGVTBL subname_vtbl;
 
-MODULE=List::Util       PACKAGE=List::Util
+MODULE=List::Util::XS       PACKAGE=List::Util::XS
 
 void
 min(...)

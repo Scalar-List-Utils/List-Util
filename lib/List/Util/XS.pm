@@ -1,9 +1,19 @@
 package List::Util::XS;
 use strict;
-use List::Util;
 
 our $VERSION = "1.42";       # FIXUP
 $VERSION = eval $VERSION;    # FIXUP
+
+require Exporter;
+
+our @ISA        = qw(Exporter);
+our @EXPORT_OK  = qw(
+  all any first min max minstr maxstr none notall product reduce sum sum0 shuffle
+  pairs unpairs pairkeys pairvalues pairmap pairgrep pairfirst
+);
+
+require XSLoader;
+XSLoader::load('List::Util::XS', $VERSION);
 
 1;
 __END__

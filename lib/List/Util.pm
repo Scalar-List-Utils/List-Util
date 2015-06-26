@@ -18,8 +18,8 @@ our $VERSION    = "1.42";
 our $XS_VERSION = $VERSION;
 $VERSION    = eval $VERSION;
 
-require XSLoader;
-XSLoader::load('List::Util', $XS_VERSION);
+require List::Util::XS;
+List::Util::XS->import(@EXPORT_OK);
 
 sub import
 {

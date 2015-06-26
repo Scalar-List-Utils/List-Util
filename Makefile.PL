@@ -8,11 +8,11 @@ use ExtUtils::MakeMaker;
 my $PERL_CORE = grep { $_ eq 'PERL_CORE=1' } @ARGV;
 
 WriteMakefile(
-  NAME         => q[List::Util],
+  NAME         => q[List::Util::XS],
   ABSTRACT     => q[List utility subroutines],
   AUTHOR       => q[Paul Evans <leonerd@leonerd.org.uk>],
   DEFINE       => q[-DPERL_EXT],
-  DISTNAME     => q[List-Utils],
+  DISTNAME     => q[List-Util],
   VERSION_FROM => 'lib/List/Util.pm',
 
   # We go through the ListUtil.xs trickery to foil platforms
