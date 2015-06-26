@@ -18,6 +18,53 @@ our @EXPORT_OK  = qw(
 our $VERSION    = "1.45";
 $VERSION    = eval $VERSION;
 
+# List::Util can be upgraded, leaving Scalar::Util and Sub::Util at their
+# pre-split version.  Those versions relied on List::Util to provide
+# their implementation in XS.  We need to detect this situation and load the old
+# compiled List::Util code that was left behind by our old version.  For newer
+# versions of those modules (and this module), we need to localize the stashes
+# while loading so the new subs aren't overwritten.
+{
+  require Scalar::Util;
+  eval { require Sub::Util };
+
+  # New Scalar::Util does not load List::Util.  If its $VERSION is false (after
+  # loading it), then it's a pre-split version of Scalar::Util loading us, and
+  # it is not fully loaded yet.
+  my $scalar_v = $Scalar::Util::VERSION || 0;
+  my $sub_v = $Sub::Util::VERSION || 0;
+
+  if (
+    ( $scalar_v <= 1.45 )
+    || ( $sub_v && $sub_v <= 1.45 )
+  ) {
+    local %Scalar::Util:: if $scalar_v > 1.45;
+    local %Sub::Util::    if $sub_v > 1.45;
+    @Scalar::Util::EXPORT_FAIL = () if $scalar_v <= 1.45;
+
+    # localizing the List::Util stash will break XSLoader::load, so we save and
+    # clear it manually.  Using this mechanism on Scalar::Util/Sub::Util would
+    # break sub names.
+    my %list_stash = %List::Util::;
+    %List::Util:: = ();
+    my $success = eval {
+      local $SIG{__DIE__};
+      require XSLoader;
+      XSLoader::load(__PACKAGE__);
+      1;
+    };
+    my $e = $@;
+    %List::Util:: = %list_stash;
+    if ($scalar_v <= 1.45) {
+      no strict 'refs';
+      push @Scalar::Util::EXPORT_FAIL,
+        grep !defined &{"Scalar::Util::$_"},
+        qw(weaken isweak isvstring);
+    }
+    die $e unless $success;
+  }
+}
+
 require List::Util::PP;
 List::Util::PP->import(@EXPORT_OK);
 
