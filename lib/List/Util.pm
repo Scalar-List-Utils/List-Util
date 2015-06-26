@@ -18,6 +18,42 @@ our $VERSION    = "1.42";
 our $XS_VERSION = $VERSION;
 $VERSION    = eval $VERSION;
 
+require Scalar::Util;
+eval { require Sub::Util };
+
+{
+  my $scalar_v = $Scalar::Util::VERSION;
+  my $sub_v = $Sub::Util::VERSION;
+
+  my $load_v;
+  if ($scalar_v <= 1.42) {
+    $load_v = $scalar_v;
+  }
+  elsif ($sub_v && $sub_v <= 1.42) {
+    $load_v = $sub_v;
+  }
+
+  if ($load_v) {
+    my %scalar_stash = %Scalar::Util::;
+    %Scalar::Util:: = () if $scalar_v > $load_v;
+    my %sub_stash = %Sub::Util::;
+    %Sub::Util:: = () if $sub_v && $sub_v > $load_v;
+    my %list_stash = %List::Util::;
+    %List::Util:: = ();
+    my $success = eval {
+      local $SIG{__DIE__};
+      require XSLoader;
+      XSLoader::load('List::Util', $load_v);
+      1;
+    };
+    my $e = $@;
+    %Scalar::Util:: = %scalar_stash if $scalar_v > $load_v;
+    %Sub::Util:: = %sub_stash if $sub_v && $sub_v > $load_v;
+    %List::Util:: = %list_stash;
+    die $e unless $success;
+  }
+}
+
 require List::Util::XS;
 List::Util::XS->import(@EXPORT_OK);
 
