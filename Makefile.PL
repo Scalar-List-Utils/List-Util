@@ -42,7 +42,15 @@ WriteMakefile(
     ? ()
     : (
       INSTALLDIRS      => ($] < 5.011 ? q[perl] : q[site]),
-      PREREQ_PM        => {'Test::More' => 0,},
+      PREREQ_PM        => {
+        (do {
+            require lib;
+            lib->import('inc');
+            require ExtUtils::HasCompiler;
+            ExtUtils::HasCompiler::can_compile_loadable_object(quiet => 1);
+        } ? ("List::Util::XS" => "1.46_01") : ()),
+        'Test::More' => 0,
+      },
       (eval { ExtUtils::MakeMaker->VERSION(6.31) } ? (LICENSE => 'perl') : ()),
       (eval { ExtUtils::MakeMaker->VERSION(6.48) } ? (MIN_PERL_VERSION => '5.006') : ()),
       ( eval { ExtUtils::MakeMaker->VERSION(6.46) } ? (
