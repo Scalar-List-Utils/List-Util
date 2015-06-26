@@ -22,33 +22,30 @@ require Scalar::Util;
 eval { require Sub::Util };
 
 {
-  my $scalar_v = $Scalar::Util::VERSION;
-  my $sub_v = $Sub::Util::VERSION;
+  # we were loaded midway through Scalar::Util, so we don't have a VERSION.
+  # this means it is an old version, and will need the old XS version.
+  my $scalar_v = $Scalar::Util::VERSION || 0;
+  my $sub_v = $Sub::Util::VERSION || 0;
 
-  my $load_v;
-  if ($scalar_v <= 1.42) {
-    $load_v = $scalar_v;
-  }
-  elsif ($sub_v && $sub_v <= 1.42) {
-    $load_v = $sub_v;
-  }
-
-  if ($load_v) {
+  if (
+    ( $scalar_v <= 1.42 )
+    || ( $sub_v && $sub_v <= 1.42 )
+  ) {
     my %scalar_stash = %Scalar::Util::;
-    %Scalar::Util:: = () if $scalar_v > $load_v;
+    %Scalar::Util:: = () if $scalar_v > 1.42;
     my %sub_stash = %Sub::Util::;
-    %Sub::Util:: = () if $sub_v && $sub_v > $load_v;
+    %Sub::Util:: = () if $sub_v > 1.42;
     my %list_stash = %List::Util::;
     %List::Util:: = ();
     my $success = eval {
       local $SIG{__DIE__};
       require XSLoader;
-      XSLoader::load('List::Util', $load_v);
+      XSLoader::load('List::Util');
       1;
     };
     my $e = $@;
-    %Scalar::Util:: = %scalar_stash if $scalar_v > $load_v;
-    %Sub::Util:: = %sub_stash if $sub_v && $sub_v > $load_v;
+    %Scalar::Util:: = %scalar_stash if $scalar_v > 1.42;
+    %Sub::Util:: = %sub_stash if $sub_v > 1.42;
     %List::Util:: = %list_stash;
     die $e unless $success;
   }
