@@ -57,5 +57,6 @@ WriteMakefile(
       )
     : ()
   ),
+  (-f 'META.yml' ? () : ( test => { TESTS => 't/*.t xt/*.t' } )),
 );
 
