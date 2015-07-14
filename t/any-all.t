@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use List::Util qw(any all notall none);
+use List::Util::PP qw(any all notall none);
 use Test::More tests => 12;
 
 ok(  (any { $_ == 1 } 1, 2, 3), 'any true' );

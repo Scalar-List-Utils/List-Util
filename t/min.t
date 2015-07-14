@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 10;
-use List::Util qw(min);
+use List::Util::PP qw(min);
 
 my $v;
 

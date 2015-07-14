@@ -6,7 +6,7 @@ use warnings;
 use Test::More tests => 2;
 
 {
-  use List::Util qw( first );
+  use List::Util::PP qw( first );
 
   my $hash = {
     'HellO WorlD' => 1,
@@ -17,7 +17,7 @@ use Test::More tests => 2;
 }
 
 {
-  use List::Util qw( any );
+  use List::Util::PP qw( any );
 
   my $hash = {
     'HellO WorlD' => 1,

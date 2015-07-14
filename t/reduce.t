@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use List::Util qw(reduce min);
+use List::Util::PP qw(reduce min);
 use Test::More;
 plan tests => 31 + ($::PERL_ONLY ? 0 : 2);
 
@@ -72,7 +72,7 @@ is($v, 12, 'return from loop');
 # Does it work from another package?
 { package Foo;
   $a = $b;
-  ::is((List::Util::reduce {$a*$b} (1..4)), 24, 'other package');
+  ::is((List::Util::PP::reduce {$a*$b} (1..4)), 24, 'other package');
 }
 
 # Can we undefine a reduce sub while it's running?
