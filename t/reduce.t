@@ -5,7 +5,7 @@ use warnings;
 
 use List::Util::PP qw(reduce min);
 use Test::More;
-plan tests => 31 + ($::PERL_ONLY ? 0 : 2);
+plan tests => 33;
 
 my $v = reduce {};
 
@@ -125,24 +125,13 @@ SKIP: {
   is($ok, '', 'Not a subroutine reference');
 }
 
-# The remainder of the tests are only relevant for the XS
-# implementation. The Perl-only implementation behaves differently
-# (and more flexibly) in a way that we can't emulate from XS.
-if (!$::PERL_ONLY) { SKIP: {
+# Can we goto a label from the reduction sub?
+eval {()=reduce{goto foo} 1,2; foo: 1};
+is $@, '', 'goto out of callback';
 
-    $List::Util::REAL_MULTICALL ||= 0; # Avoid use only once
-    skip("Poor man's MULTICALL can't cope", 2)
-      if !$List::Util::REAL_MULTICALL;
-
-    # Can we goto a label from the reduction sub?
-    eval {()=reduce{goto foo} 1,2; foo: 1};
-    like($@, qr/^Can't "goto" out of a pseudo block/, "goto label");
-
-    # Can we goto a subroutine?
-    eval {()=reduce{goto sub{}} 1,2;};
-    like($@, qr/^Can't goto subroutine from a sort sub/, "goto sub");
-
-} }
+# Can we goto a subroutine?
+eval {()=reduce{goto sub{}} 1,2;};
+is $@, '', 'goto subref in callback';
 
 # XSUB callback
 use constant XSUBC => 42;
