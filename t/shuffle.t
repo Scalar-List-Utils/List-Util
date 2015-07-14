@@ -5,7 +5,7 @@ use warnings;
 
 use Test::More tests => 6;
 
-use List::Util qw(shuffle);
+use List::Util::PP qw(shuffle);
 
 my @r;
 

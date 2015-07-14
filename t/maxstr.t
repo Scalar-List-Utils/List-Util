@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 5;
-use List::Util qw(maxstr);
+use List::Util::PP qw(maxstr);
 
 my $v;
 
