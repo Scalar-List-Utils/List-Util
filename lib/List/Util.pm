@@ -16,11 +16,10 @@ our @EXPORT_OK  = qw(
   pairs unpairs pairkeys pairvalues pairmap pairgrep pairfirst
 );
 our $VERSION    = "1.45";
-our $XS_VERSION = $VERSION;
 $VERSION    = eval $VERSION;
 
-require XSLoader;
-XSLoader::load('List::Util', $XS_VERSION);
+require List::Util::PP;
+List::Util::PP->import(@EXPORT_OK);
 
 sub import
 {
@@ -34,10 +33,6 @@ sub import
 
   goto &Exporter::import;
 }
-
-# For objects returned by pairs()
-sub List::Util::_Pair::key   { shift->[0] }
-sub List::Util::_Pair::value { shift->[1] }
 
 =head1 NAME
 

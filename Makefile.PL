@@ -9,20 +9,8 @@ WriteMakefile(
   NAME         => q[List::Util],
   ABSTRACT     => q[Common List utility subroutines],
   AUTHOR       => q[Graham Barr <gbarr@cpan.org>],
-  DEFINE       => q[-DPERL_EXT],
-  DISTNAME     => q[Scalar-List-Utils],
   VERSION_FROM => 'lib/List/Util.pm',
 
-  # We go through the ListUtil.xs trickery to foil platforms
-  # that have the feature combination of
-  # (1) static builds
-  # (2) allowing only one object by the same name in the static library
-  # (3) the object name matching being case-blind
-  # This means that we can't have the top-level util.o
-  # and the extension-level Util.o in the same build.
-  # One such platform is the POSIX-BC BS2000 EBCDIC mainframe platform.
-  XS     => {'ListUtil.xs' => 'ListUtil.c'},
-  OBJECT => 'ListUtil$(OBJ_EXT)',
   ( $PERL_CORE
     ? ()
     : (
