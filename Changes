@@ -1,3 +1,8 @@
+1.46_01 - 2016-08-18
+  - List::Util has been split out from Scalar-List-Utils as a pure-perl module,
+    optionally using List::Util::XS
+  - fix tests under ancient Test::More
+
 1.45 -- 2016/03/25 16:09:40
 	[CHANGES]
 	 * Renamed existing uniq() to uniqstr()
