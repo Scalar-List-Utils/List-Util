@@ -15,7 +15,7 @@ our @EXPORT_OK  = qw(
   all any first min max minstr maxstr none notall product reduce sum sum0 shuffle uniq uniqnum uniqstr
   pairs unpairs pairkeys pairvalues pairmap pairgrep pairfirst
 );
-our $VERSION    = "1.45";
+our $VERSION    = "1.46_01";
 $VERSION    = eval $VERSION;
 
 # List::Util can be upgraded, leaving Scalar::Util and Sub::Util at their
