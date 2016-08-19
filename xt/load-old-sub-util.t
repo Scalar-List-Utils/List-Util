@@ -22,8 +22,22 @@ END_SUB_UTIL
 );
 unshift @INC, sub {
   if (my $code = $modules{$_[1]}) {
-    open my $fh, '<', \$code;
-    return $fh;
+    if ("$]" >= 5.008) {
+      open my $fh, '<', \$code
+        or die "error loading module: $!";
+      return $fh;
+    }
+    else {
+      my $pos = 0;
+      my $last = length $code;
+      return (sub {
+        return 0 if $pos == $last;
+        my $next = (1 + index $code, "\n", $pos) || $last;
+        $_ .= substr $code, $pos, $next - $pos;
+        $pos = $next;
+        return 1;
+      });
+    }
   }
   return;
 };
