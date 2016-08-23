@@ -17,6 +17,5 @@
 *.c
 .*.swp
 
-/inc/
 /List-Util-*/
 /List-Util-*.tar.gz
