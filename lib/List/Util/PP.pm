@@ -16,7 +16,7 @@ our @EXPORT_OK  = qw(
   pairs unpairs pairkeys pairvalues pairmap pairgrep pairfirst
 );
 
-our $VERSION = "1.46_01";
+our $VERSION = '1.46_02';
 $VERSION = eval $VERSION;
 
 sub import {
