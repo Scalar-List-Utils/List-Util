@@ -85,7 +85,12 @@ $VERSION    = eval $VERSION;
         grep $exports{$_} && !defined &{"Scalar::Util::$_"},
         qw(weaken isweak dualvar isvstring set_prototype);
     }
-    die $e unless $success;
+    die $e
+      if !$success
+      && (
+        ( $scalar_v >= 1.23_03 && $scalar_v <= 1.45)
+        || ($sub_v && $sub_v <= 1.45)
+      );
   }
 }
 
