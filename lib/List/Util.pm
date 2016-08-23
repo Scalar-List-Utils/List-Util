@@ -43,6 +43,21 @@ $VERSION    = eval $VERSION;
     local %Sub::Util::    if $sub_v > 1.45;
     @Scalar::Util::EXPORT_FAIL = () if $scalar_v <= 1.45;
 
+    # Try to find the location of the old List::Util module based on the
+    # Scalar::Util or Sub::Util we loaded.  If this is accurate, it will let
+    # XSLoader load the XS code directly.  XSLoader will automatically fall back
+    # to DynaLoader if this is wrong.
+    my $location = '';
+    if (
+      my $old_lu
+        = $scalar_v <= 1.45 ? $INC{'Scalar/Util.pm'}
+        : $sub_v <= 1.45    ? $INC{'Sub/Util.pm'}
+        : undef
+    ) {
+      $old_lu =~ s/\b(?:Scalar|Sub)\b(.Util\.pm)$/List$1/;
+      $location = qq{#line 1 "$old_lu"\n};
+    }
+
     # localizing the List::Util stash will break XSLoader::load, so we save and
     # clear it manually.  Using this mechanism on Scalar::Util/Sub::Util would
     # break sub names.
@@ -51,7 +66,7 @@ $VERSION    = eval $VERSION;
 
     # Scalar::Util may have thought it needed PP code, which we may end up
     # overwriting.  Silence the warnings this may trigger.
-    my $success = eval {
+    my $success = eval $location . q{
       local $^W = 0;
       local $SIG{__DIE__};
       require XSLoader;
