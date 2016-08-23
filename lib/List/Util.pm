@@ -18,6 +18,9 @@ our @EXPORT_OK  = qw(
 );
 our $VERSION    = "1.46_01";
 $VERSION    = eval $VERSION;
+BEGIN {
+  *_NEED_TRY_XS = sub(){1};
+}
 
 # List::Util can be upgraded, leaving Scalar::Util and Sub::Util at their
 # pre-split version.  Those versions relied on List::Util to provide
@@ -25,7 +28,7 @@ $VERSION    = eval $VERSION;
 # compiled List::Util code that was left behind by our old version.  For newer
 # versions of those modules (and this module), we need to localize the stashes
 # while loading so the new subs aren't overwritten.
-{
+if (_NEED_TRY_XS) {
   require Scalar::Util;
   eval { require Sub::Util };
 
