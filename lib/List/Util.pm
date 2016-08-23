@@ -65,12 +65,17 @@ $VERSION    = eval $VERSION;
   }
 }
 
-if (eval { require List::Util::XS; } && $List::Util::XS::VERSION > 1.45) {
-  List::Util::XS->import(@EXPORT_OK);
-}
-else {
-  require List::Util::PP;
-  List::Util::PP->import(@EXPORT_OK);
+{
+  my @imports = @EXPORT_OK;
+  if (eval { require List::Util::XS; } && $List::Util::XS::VERSION > 1.45) {
+    my %xs_imports = map +($_ => 1), @List::Util::XS::EXPORT_OK;
+    List::Util::XS->import(grep $xs_imports{$_}, @imports);
+    @imports = grep !$xs_imports{$_}, @imports;
+  }
+  if (@imports) {
+    require List::Util::PP;
+    List::Util::PP->import(@imports);
+  }
 }
 
 sub import
