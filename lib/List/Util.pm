@@ -39,16 +39,17 @@ if (_NEED_TRY_XS && eval {
     $Scalar::Util::VERSION = 1.11;
   }
 
-  # New Scalar::Util does not load List::Util.  If its $VERSION is false (after
-  # loading it), then it's a pre-split version of Scalar::Util loading us, and
-  # it is not fully loaded yet.
+  # $Scalar::Util::VERSION may be false if it is part way through loading and
+  # trying to load List::Util.  This will only be the case for older versions.
   my $scalar_v = $Scalar::Util::VERSION || 0;
+  # Sub::Util should always have an accurate version if it loaded
   my $sub_v = eval { require Sub::Util } ? $Sub::Util::VERSION : 0;
 
   if (
     ( $scalar_v <= 1.45 )
     || ( $sub_v && $sub_v <= 1.45 )
   ) {
+    # localize the stashes for newer versions so we don't effect them
     local %Scalar::Util:: if $scalar_v > 1.45;
     local %Sub::Util::    if $sub_v > 1.45;
 
