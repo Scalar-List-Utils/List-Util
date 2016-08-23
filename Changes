@@ -1,3 +1,5 @@
+Revision history for List::Util
+
 1.46_01 - 2016-08-18
   - List::Util has been split out from Scalar-List-Utils as a pure-perl module,
     optionally using List::Util::XS
