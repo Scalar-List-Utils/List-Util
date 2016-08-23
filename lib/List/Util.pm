@@ -28,15 +28,22 @@ BEGIN {
 # compiled List::Util code that was left behind by our old version.  For newer
 # versions of those modules (and this module), we need to localize the stashes
 # while loading so the new subs aren't overwritten.
-if (_NEED_TRY_XS) {
+if (_NEED_TRY_XS && eval {
+  # old Scalar::Util may copy its version from us.  it may also check our
+  # version, so it must be greater than 1.45.
+  local $VERSION = 9999;
   require Scalar::Util;
-  eval { require Sub::Util };
+}) {
+  # if Scalar::Util copied our version, it is 1.11 at the latest
+  if ($Scalar::Util::VERSION && $Scalar::Util::VERSION == 9999) {
+    $Scalar::Util::VERSION = 1.11;
+  }
 
   # New Scalar::Util does not load List::Util.  If its $VERSION is false (after
   # loading it), then it's a pre-split version of Scalar::Util loading us, and
   # it is not fully loaded yet.
   my $scalar_v = $Scalar::Util::VERSION || 0;
-  my $sub_v = $Sub::Util::VERSION || 0;
+  my $sub_v = eval { require Sub::Util } ? $Sub::Util::VERSION : 0;
 
   if (
     ( $scalar_v <= 1.45 )
