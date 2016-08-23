@@ -47,12 +47,12 @@ if (_NEED_TRY_XS && eval {
   my $sub_v = eval { require Sub::Util } ? $Sub::Util::VERSION : 0;
 
   if (
-    ( $scalar_v <= 1.45 )
-    || ( $sub_v && $sub_v <= 1.45 )
+    ( $scalar_v < 1.46 )
+    || ( $sub_v && $sub_v < 1.46 )
   ) {
     # localize the stashes for newer versions so we don't effect them
-    local %Scalar::Util:: if $scalar_v > 1.45;
-    local %Sub::Util::    if $sub_v > 1.45;
+    local %Scalar::Util:: if $scalar_v >= 1.46;
+    local %Sub::Util::    if $sub_v >= 1.46;
 
     # Try to find the location of the old List::Util module based on the
     # Scalar::Util or Sub::Util we loaded.  If this is accurate, it will let
@@ -61,8 +61,8 @@ if (_NEED_TRY_XS && eval {
     my $location = '';
     if (
       my $old_lu
-        = $scalar_v <= 1.45 ? $INC{'Scalar/Util.pm'}
-        : $sub_v <= 1.45    ? $INC{'Sub/Util.pm'}
+        = $scalar_v < 1.46 ? $INC{'Scalar/Util.pm'}
+        : $sub_v < 1.46    ? $INC{'Sub/Util.pm'}
         : undef
     ) {
       $old_lu =~ s/\b(?:Scalar|Sub)\b(.Util\.pm)$/List$1/;
@@ -90,7 +90,7 @@ if (_NEED_TRY_XS && eval {
     # If we loaded old Scalar::Util, it will have populated @EXPORT_FAIL before
     # the XS was loaded, when no subs existed.  clear it out and repopulate it
     # now that it should be fully loaded.
-    if ($scalar_v <= 1.45) {
+    if ($scalar_v < 1.46) {
       no strict 'refs';
       my %exports = map +($_ => 1), @Scalar::Util::EXPORT_OK;
       @Scalar::Util::EXPORT_FAIL =
@@ -100,15 +100,15 @@ if (_NEED_TRY_XS && eval {
     die $e
       if !$success
       && (
-        ( $scalar_v >= 1.23_03 && $scalar_v <= 1.45)
-        || ($sub_v && $sub_v <= 1.45)
+        ( $scalar_v >= 1.23_03 && $scalar_v < 1.46)
+        || ($sub_v && $sub_v < 1.46)
       );
   }
 }
 
 {
   my @imports = @EXPORT_OK;
-  if (eval { require List::Util::XS; } && $List::Util::XS::VERSION > 1.45) {
+  if (eval { require List::Util::XS; } && $List::Util::XS::VERSION >= 1.46) {
     my %xs_imports = map +($_ => 1), @List::Util::XS::EXPORT_OK;
     List::Util::XS->import(grep $xs_imports{$_}, @imports);
     @imports = grep !$xs_imports{$_}, @imports;
