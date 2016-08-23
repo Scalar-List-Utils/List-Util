@@ -1,5 +1,13 @@
 Revision history for List::Util
 
+  - additional diagnostic test
+  - don't throw errors when old XS fails to load if there is a PP implementation
+  - do a better job setting up @Scalar::Util::EXPORT_FAIL
+  - avoid loading DynaLoader when possible
+  - cope better with old Scalar::Util that had a PP implementation
+  - if List::Util::XS is lacking a sub, use the implementation from
+    List::Util::PP.
+
 1.46_01 - 2016-08-18
   - List::Util has been split out from Scalar-List-Utils as a pure-perl module,
     optionally using List::Util::XS
