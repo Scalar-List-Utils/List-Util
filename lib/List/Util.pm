@@ -31,7 +31,8 @@ BEGIN {
 if (_NEED_TRY_XS && eval {
   # old Scalar::Util may copy its version from us.  it may also check our
   # version, so it must be greater than 1.45.
-  local $VERSION = 9999;
+  local $VERSION
+    = 9999;
   require Scalar::Util;
 }) {
   # if Scalar::Util copied our version, it is 1.11 at the latest
