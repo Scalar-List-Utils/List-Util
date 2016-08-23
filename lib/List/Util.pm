@@ -8,6 +8,7 @@ package List::Util;
 
 use strict;
 use warnings;
+no warnings 'once';
 require Exporter;
 
 our @ISA        = qw(Exporter);
@@ -47,7 +48,11 @@ $VERSION    = eval $VERSION;
     # break sub names.
     my %list_stash = %List::Util::;
     %List::Util:: = ();
+
+    # Scalar::Util may have thought it needed PP code, which we may end up
+    # overwriting.  Silence the warnings this may trigger.
     my $success = eval {
+      local $^W = 0;
       local $SIG{__DIE__};
       require XSLoader;
       XSLoader::load(__PACKAGE__);
@@ -55,11 +60,12 @@ $VERSION    = eval $VERSION;
     };
     my $e = $@;
     %List::Util:: = %list_stash;
+
     if ($scalar_v <= 1.45) {
       no strict 'refs';
-      push @Scalar::Util::EXPORT_FAIL,
+      @Scalar::Util::EXPORT_FAIL =
         grep !defined &{"Scalar::Util::$_"},
-        qw(weaken isweak isvstring);
+        @Scalar::Util::EXPORT_OK;
     }
     die $e unless $success;
   }
