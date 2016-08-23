@@ -1,5 +1,6 @@
 Revision history for List::Util
 
+1.46_03 - 2016-08-23
   - also load old XS code for 1.45_xx versions
 
 1.46_02 - 2016-08-23
