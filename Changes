@@ -1,5 +1,7 @@
 Revision history for List::Util
 
+  - also load old XS code for 1.45_xx versions
+
 1.46_02 - 2016-08-23
   - additional diagnostic test
   - don't throw errors when old XS fails to load if there is a PP implementation
