@@ -1,5 +1,6 @@
 Revision history for List::Util
 
+1.46_02 - 2016-08-23
   - additional diagnostic test
   - don't throw errors when old XS fails to load if there is a PP implementation
   - do a better job setting up @Scalar::Util::EXPORT_FAIL
