@@ -41,7 +41,6 @@ $VERSION    = eval $VERSION;
   ) {
     local %Scalar::Util:: if $scalar_v > 1.45;
     local %Sub::Util::    if $sub_v > 1.45;
-    @Scalar::Util::EXPORT_FAIL = () if $scalar_v <= 1.45;
 
     # Try to find the location of the old List::Util module based on the
     # Scalar::Util or Sub::Util we loaded.  If this is accurate, it will let
@@ -76,11 +75,15 @@ $VERSION    = eval $VERSION;
     my $e = $@;
     %List::Util:: = %list_stash;
 
+    # If we loaded old Scalar::Util, it will have populated @EXPORT_FAIL before
+    # the XS was loaded, when no subs existed.  clear it out and repopulate it
+    # now that it should be fully loaded.
     if ($scalar_v <= 1.45) {
       no strict 'refs';
+      my %exports = map +($_ => 1), @Scalar::Util::EXPORT_OK;
       @Scalar::Util::EXPORT_FAIL =
-        grep !defined &{"Scalar::Util::$_"},
-        @Scalar::Util::EXPORT_OK;
+        grep $exports{$_} && !defined &{"Scalar::Util::$_"},
+        qw(weaken isweak dualvar isvstring set_prototype);
     }
     die $e unless $success;
   }
